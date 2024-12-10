@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from psycopg2 import DatabaseError, connect
+from psycopg2 import DatabaseError, OperationalError, connect
 import os
 load_dotenv()
 conn = None
@@ -25,6 +25,8 @@ try:
     # We actually need to commit to make something happen. Otherwise the updates are just queued up but never committed.
     conn.commit()
     cursor.close() # Closes the cursor
+except OperationalError as e:
+        print(f"Error connecting to the database: {e}")
 except DatabaseError as error:
     # Prints and error if we for example enter a duplicate primary key or violate other constraints.
     conn.rollback() # If something goes wrong, all pending commits are cleared from memory.
